@@ -9,10 +9,10 @@ const router = express.Router()
 
 //GET
 router.get('/users', [cacheMiddleware, logger], async (req, res) => {
-    const { page = 1, pageSize = 6 } = req.query
+    const { page = 1, pageSize = 8 } = req.query
     try {
         const users = await UsersModel.find()
-            .populate('posts', 'title content')//visualizziamo dati completi o referenze
+            .populate('posts', 'title content') /* REFERENCE */
             .limit(pageSize)
             .skip((page - 1) * pageSize)
 
@@ -43,6 +43,7 @@ router.post('/users', validateUser, async (req, res) => {
         email: req.body.email,
         password: hashPW,
         age: req.body.age,
+        role: req.body.role
     })
     try {
         const userExist = await UsersModel.findOne({ email: req.body.email })

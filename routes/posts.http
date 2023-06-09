@@ -10,10 +10,10 @@ POST http://localhost:5050/posts HTTP/1.1
 content-type: application/json
 
 {
-    "title": "post12",
+    "title": "referenceTest03",
     "img": "https://picsum.photos/1920/1080",
     "content": "Lorem ipsum dolor sit amet, officia excepteur ex fugiat reprehenderit enim labore culpa sint ad nisi Lorem pariatur mollit ex esse exercitation amet.",
-    "author": "647dfd4bf43473c646cf846d",
+    "author": "647e310e839092ae4b5a77bc",
     "rate": 5
 }
 

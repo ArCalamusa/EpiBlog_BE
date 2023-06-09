@@ -8,7 +8,8 @@ import dotenv from 'dotenv'
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import path from 'path'
-import sendEmail from './routes/sendEmail.js'
+import sendEmailRoute from './routes/sendEmail.js'
+import githubRoute from './routes/gitHubAuth.js'
 
 dotenv.config()
 
@@ -26,7 +27,9 @@ app.use(cors()); //abilita il server a ricevere richieste da qualsiasi origine
 app.use('/', UsersRoute)
 app.use('/', loginRoute)
 app.use('/', postRoute)
-app.use('/', sendEmail)
+app.use('/', sendEmailRoute)
+app.use('/', githubRoute)
+
 
 mongoose.connect(process.env.DB_URL, {
     //oggetti di configuarazione richiesti da documentazione

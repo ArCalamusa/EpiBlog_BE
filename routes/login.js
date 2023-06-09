@@ -23,20 +23,28 @@ router.post('/login', async (req, res) => {
             statusCode: 400
         })
     }
-    const token = jwt.sign({email: user.email}, process.env.SECRET_JWT_KEY, {
-        expiresIn: '24h'
+    const token = jwt.sign({
+        email: user.email,
+        userName: user.userName,
+        role: user.role,
+        id: user._id /* reference */
+    }, 
+        
+        process.env.SECRET_JWT_KEY, {
+        expiresIn: '24h' //validità del token
     })
     res.header('auth', token).status(200).send({
         message: 'login effettuato con successo',
         statusCode: 200,
         token
     })
-    //metodo preToken
-    // return res.status(200).send({  
-    //     message: 'Login effettuato con successo',
-    //     stausCode: 200,
-    //     payload: user,
-    // })
 })
 
 export default router
+
+/*metodo preToken
+return res.status(200).send({  
+    message: 'Login effettuato con successo',
+    stausCode: 200,
+    payload: user,
+})*/

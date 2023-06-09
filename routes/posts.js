@@ -1,10 +1,11 @@
 import express from "express"
 import PostModel from "../models/post.js"
-import { body, validationResult } from 'express-validator'
-import {v2 as cloudinary} from 'cloudinary'
+import { validationResult } from 'express-validator'
+import { v2 as cloudinary } from 'cloudinary'
 import { CloudinaryStorage } from 'multer-storage-cloudinary'
 import multer from 'multer'
 import dotenv from 'dotenv'
+import UserModel from "../models/users.js"
 
 dotenv.config()
 
@@ -102,10 +103,10 @@ post.post('/posts/uploadImg', internalUpload.single('img'), async (req, res) => 
 
 //GET
 post.get('/posts', async (req, res) => {
-    const { page = 1, pageSize = 6 } = req.query
+    const { page = 1, pageSize = 8 } = req.query
     try {
         const posts = await PostModel.find()
-            .populate('author')
+            .populate('author', 'userName email') /* REFERECE */
             .limit(pageSize)
             .skip((page - 1) * pageSize)
 
@@ -157,34 +158,34 @@ post.get('/posts/bytitle/:title', async (req, res) => {
 
 //POST
 post.post('/posts', async (req, res) => {
-
-    const user = await UsersModel.findOne({ _id: req.body.author, salt})
-
     const errors = validationResult(req)
+
+    const user = await UserModel.findOne({ _id: req.body.author }) /* reference */
+
     if (!errors.isEmpty()) {
         return res.status(400).send({
             errors: errors.array(),
             statusCode: 400
         })
     }
-    const posts = new PostModel({
+
+    const post = new PostModel({
         title: req.body.title,
         content: req.body.content,
-        author: user._id,
         img: req.body.img,
-        author: req.body.author,
+        author: user._id, /* reference */
         rate: req.body.rate
     })
     try {
         const postExist = await PostModel.findOne({ title: req.body.title })
-        await UsersModel.updateOne({_id: user._id}, {$push: {posts: post}})
         if (postExist) {
             return res.status(409).send({
                 message: 'Esiste già un post con questo titolo',
                 statusCode: 409
             })
         }
-        const newPost = await posts.save()
+        const newPost = await post.save()
+        await UserModel.updateOne({ _id: user._id }, { $push: { posts: newPost } }) /* reference */
         res.status(201).send({
             message: 'Post salvato con successo',
             statusCode: 201,

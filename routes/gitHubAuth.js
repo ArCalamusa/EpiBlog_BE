@@ -1,11 +1,11 @@
-import express from "express"
+import express from 'express'
 const router = express.Router()
 import Authenticator from 'passport'
-import session from 'express-session'
 import dotenv from 'dotenv'
-import passport from "passport"
-import { Strategy as GithubStrategy } from "passport-github2"
-import session from "express-session"
+import passport from 'passport'
+import { Strategy as GithubStrategy } from 'passport-github2'
+import session from 'express-session'
+
 
 dotenv.config()
 
@@ -28,6 +28,7 @@ passport.deserializeUser((user, done) => {
     done(null, user)
 })
 
+/*strategia accesso Github*/
 passport.use(
     new GithubStrategy({
         clientID: process.env.GITHUB_CLIENT_ID,
@@ -38,6 +39,7 @@ passport.use(
     })
 )
 
+// passport.authenticate è un middleware
 router.get('/auth/github', passport.authenticate('github', { scope: ['user:email'] }), (req, res) => {
     console.log(res)
 })
